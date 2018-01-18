@@ -35,8 +35,8 @@ up to version 5.6.5 elasticsearch used to publish the `dockerfile` to rebuild th
 
 #### Docker configuration files
 
-- [Kibana DockerFile](./Dockerfile.kibana.6.0.1)
-- [Elasticsearch DockerFile](./Dockerfile.elasticsearch.6.0.1)
+- [Kibana Dockerfile](./Dockerfile.kibana.6.0.1)
+- [Elasticsearch Dockerfile](./Dockerfile.elasticsearch.6.0.1)
 
 #### Docker Input Files
 
