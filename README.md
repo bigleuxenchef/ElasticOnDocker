@@ -43,8 +43,8 @@ up to version 5.6.5 elasticsearch used to publish the `dockerfile` to rebuild th
 In order to build a docker image, very often a series of files are used in the built process, in this case we have the followinf files :
 
 - Docker Entry point, this is the file that is used to define the steps the docker container should first execute when a image is brought up. It is not mandatory but it seems to have been a widely spread practice.
-..* [Entry point for Elastic container](./docker-entrypoint.sh)
-..* [Entry point for Kibana container](./docker-entrypoint-kibana.sh)
+   - [Entry point for Elastic container](./docker-entrypoint.sh)
+   - [Entry point for Kibana container](./docker-entrypoint-kibana.sh)
 - Any configuration file that can serve as template in order to configure the container. Two approaches here in order to configure the container:
 	1. configuration files with environment variables like [elasticsearch.yml](./config/elasticsearch.yml). Then environment variables can be setup at launch time or some in the entry point.
 	2. use the the dockerfile with a series of command like `sed`, `awk` in order to change some of the configuration to fit your need.
