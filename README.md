@@ -104,9 +104,10 @@ docker run --env NETWORK_HOST=_eth0_ --env ES_JAVA_OPTS="-Xms2G -Xmx2G" --env NO
 docker run --env NETWORK_HOST=_eth0_ --env ELASTICSEARCH_URL=http://<your-hostanme>:9200 --env ES_JAVA_OPTS="-Xms2G -Xmx2G" --env NODE_NAME=node1  -p 5601:5601 -it --rm kibana:6.0.1
 ```
 
+This should work as if elastic would run natively on your machine.
 
 
-### Virtualization
+### Virtualization using Docker-Machine
 
 TBD
 
