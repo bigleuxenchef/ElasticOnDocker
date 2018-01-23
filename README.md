@@ -12,6 +12,10 @@
 - Linux Debian images pre-loaded in docker
 - OpenJdk images pre-loaded in docker
 
+Download all necessary file in such a way you have the following in download directory :
+
+<img src="./images/directory.png" width=50% >
+
 
 ## Tooling when working with docker
 
