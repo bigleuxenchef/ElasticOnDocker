@@ -20,16 +20,16 @@ When creating images with docker, one should be very prepared to cycle through t
 
 - [gosu](https://github.com/tianon/gosu) : this tools allows you to interact with your docker container and make adjustment while developing. Not sure it is recommended for production as it may weaken the security. 
 - [su-exec](https://github.com/ncopa/su-exec) is an alternative to `gosu`, gosu take 1.6mb while su-exec only 10kb (power of c over go  :facepunch: :clap:, it really matter if you want to make your image as small as possible without losing any good feature). The draw back is the need to compile it which can be challenging for user not use to c.
-- Postman is your best friend, there is no better tools for development to build rest request in a very flexible way and make them portable on different environment.
+- Postman is your best friend, there is no better tools for development to build rest request in a very flexible way and make them portable on different environments.
 - sed : this is where unix gets an edge over windows; windows has been built to click on mouse button, Unix has been built from the beginning to interact with efficient scripting or command capabilities, sed is exactly a nice introduction. Unix has a cohesive integration of shell and kernel. I am fan of 'awk family' (awk, nawk, gawk).
 
 ## Preparing the image : THE DOCKERFILE...S
 
-up to version 5.6.5 elasticsearch used to publish the `dockerfile` to rebuild the docker image, from there it could have been customized to any needs. We can still find them [here](https://hub.docker.com/_/elasticsearch/). This is still good practice to be able to rebuilt everything from scratch in case it needs to be tweaked or patched or even more to comply to some standard component to be used. We will start building our image from the last version published which is already a good base, we will comment the steps we don't need and will leave them in the code for reference.
+up to version 5.6.5 elasticsearch used to publish the `dockerfile` to rebuild the docker image, from there it could have been customized to any needs. We can still find them [here](https://hub.docker.com/_/elasticsearch/). This is still good practice to be able to rebuild everything from scratch in case it needs to be tweaked or patched or even more to comply to some standard component to be used. We will start building our image from the last version published which is already a good base, we will comment the steps we don't need and will leave them in the code for reference.
 
-> minimize internet interaction
+> Minimize internet interaction
 > It is in my opinion best to create images relying on file being downloaded prior to invoke docker build, it is inevitable that this will be the norm in the production environment.
-> in this case we have to get the images of openjdk and debian linux, if you prefer using another linus version, up to you to change.
+> in this case we have to get the images of openjdk and debian linux, if you prefer using another linux version, up to you to change.
 
 ### list of artifacts before launching `DOCKER BUILD`
 
@@ -40,7 +40,7 @@ up to version 5.6.5 elasticsearch used to publish the `dockerfile` to rebuild th
 
 #### Docker Input Files
 
-In order to build a docker image, very often a series of files are used in the built process, in this case we have the followinf files :
+In order to build a docker image, very often a series of files are used in the built process, in this case we have the following files :
 
 - Docker Entry point, this is the file that is used to define the steps the docker container should first execute when a image is brought up. It is not mandatory but it seems to have been a widely spread practice.
    - [Entry point for Elastic container](./docker-entrypoint.sh)
@@ -51,12 +51,56 @@ In order to build a docker image, very often a series of files are used in the b
 	
 > There is no good or  bad approach but the first one allows dynamic configuration the second one is really used at built phase. There is a third approach: keep the configuration file outside the container and mount them using a volume at run time. In this case, we see the benefit when the configuration is common to all running container. When the configuration needs to be specific to all container the 'volume mount'approach even though possible may be a little overkilled.
 
+#### Building the docker images
+
+#### `DOCKER BUILD`
+
+
+
+``` 
+# building Elasticsearch image
+docker build . -f Dockerfile.elasticsearch.6.0.1 -t elasticsearch:6.0.1
+
+# building Kibana image
+
+docker build . -f Dockerfile.kibana.6.0.1 -t kibana:6.0.1
+```
+
+check images has been put in docker repository
+
+```
+
+> docker images
+REPOSITORY           TAG                 IMAGE ID            CREATED             SIZE
+elasticsearch        6.0.1               ddd73f2976d0        54 seconds ago      871MB
+kibana               6.0.1               6b5f1232dc88        3 minutes ago       625MB
+openjdk              8-jre               c49bf7000580        5 weeks ago         538MB
+debian               jessie              2fe79f06fa6d        6 weeks ago         123MB
+
+```
+
+#### `DOCKER COMPOSE`
+
+you will find the docker-compose file [here](./docker-compose.yml)
+
 
 ## Deployment and test 
 
-### Standalone
+The benefit of the 4 different deployments mode is to demonstrate how portable and flexible is the container. This makes it very convenient to avoid environment issue regardless of whether we use the container in development, test or production.
 
-TBD
+### Stand-alone
+
+With Docker engine installed on one machine (or VM). For that you just need docker engine installed.
+
+```
+# launching elasticsearh
+docker run --env NETWORK_HOST=_eth0_ --env ES_JAVA_OPTS="-Xms2G -Xmx2G" --env NODE_NAME=node1 -p 9200:9200 -p 9300:9300 -it elasticsearch:6.0.1
+
+# launching kibana 
+docker run --env NETWORK_HOST=_eth0_ --env ELASTICSEARCH_URL=http://<your-hostanme>:9200 --env ES_JAVA_OPTS="-Xms2G -Xmx2G" --env NODE_NAME=node1  -p 5601:5601 -it --rm kibana:6.0.1
+```
+
+
 
 ### Virtualization
 
@@ -65,6 +109,8 @@ TBD
 ### Manual cluster deployment
 
 TBD 
+
+
 
 
 ### Cluster with Docker Swarm mode
