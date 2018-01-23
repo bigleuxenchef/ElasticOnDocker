@@ -66,7 +66,6 @@ In order to build a docker image, very often a series of files are used in the b
 docker build . -f Dockerfile.elasticsearch.6.0.1 -t elasticsearch:6.0.1
 
 # building Kibana image
-
 docker build . -f Dockerfile.kibana.6.0.1 -t kibana:6.0.1
 ```
 
@@ -103,6 +102,13 @@ docker run --env NETWORK_HOST=_eth0_ --env ES_JAVA_OPTS="-Xms2G -Xmx2G" --env NO
 # launching kibana 
 docker run --env NETWORK_HOST=_eth0_ --env ELASTICSEARCH_URL=http://<your-hostanme>:9200 --env ES_JAVA_OPTS="-Xms2G -Xmx2G" --env NODE_NAME=node1  -p 5601:5601 -it --rm kibana:6.0.1
 ```
+
+> Note the usage of `NETWORK_HOST=_eth0_` :  this environment variable will set the corresponding variable in elasticsearch.yml. There are many ways to set that variables, it can be an IP adress, a hostname, or an inteface in the form or `_eth0_` or `_eth0:ipv4_`. This is important to mention the interface when the host has many interface, this can avoid confusion and avoid system to pick a random interface.
+
+> Note that if you want to have all the list of variable that can be configure to change elastic behavior, you can edit the yml file. Furthermore, in addition to any specific variables of elastic, you can change pretty much whatever you want for the jvm.
+
+> for simplicity, volumes have not been address by now. there will be later on.
+
 
 This should work as if elastic would run natively on your machine.
 
