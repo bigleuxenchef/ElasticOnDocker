@@ -17,6 +17,8 @@ Download all necessary file in such a way you have the following in download dir
 <img src="./images/directory.png" width=50% >
 
 
+
+
 ## Tooling when working with docker
 
 When creating images with docker, one should be very prepared to cycle through the process of try and error, which is not usual in IT but with image creation we should balance between the will to drop everything in the contain to make it easy to develop and maintain and the basic principle of the container. Even though the tool may seem rudimentary for non unix expert but with the bare bone unix you can already accomplished a lot once you know the hidden treasure of unix. However it may still be convenient to drop tools like gosu 
@@ -115,7 +117,7 @@ This should work as if elastic would run natively on your machine.
 
 ### Virtualization using Docker-Machine
 
-TBD
+
 
 ### Manual cluster deployment
 

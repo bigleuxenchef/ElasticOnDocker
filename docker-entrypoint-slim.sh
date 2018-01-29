@@ -1,4 +1,5 @@
 #!/bin/bash
+# rumi 2018
 
 set -e
 

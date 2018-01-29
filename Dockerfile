@@ -1,3 +1,6 @@
+# rumi 2018
+
+
 FROM openjdk:8-jre
 
 # grab gosu for easy step-down from root
