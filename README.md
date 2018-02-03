@@ -121,7 +121,11 @@ This should work as if elastic would run natively on your machine.
 
 ### Manual cluster deployment
 
-TBD 
+### Docker-Machine
+
+Docker-machine is a way to simulate a network on your machine therefore to test a cluster with multiple node. We will not explain here how to setup docker-machine but just remind the basics to start, stop and check the status of the machine.
+
+ 
 
 
 
