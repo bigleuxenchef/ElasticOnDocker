@@ -117,7 +117,104 @@ This should work as if elastic would run natively on your machine.
 
 ### Virtualization using Docker-Machine
 
+Prerequisite 
 
+Virtualbox installed
+
+
+#### Create docker-machine
+
+```bash
+MBP15:ElasticOnDocker rumi$ docker-machine create test
+Running pre-create checks...
+(test) Default Boot2Docker ISO is out-of-date, downloading the latest release...
+(test) Latest release for github.com/boot2docker/boot2docker is v17.12.1-ce
+(test) Downloading /Users/rumi/.docker/machine/cache/boot2docker.iso from https://github.com/boot2docker/boot2docker/releases/download/v17.12.1-ce/boot2docker.iso...
+(test) 0%....10%....20%....30%....40%....50%....60%....70%....80%....90%....100%
+Creating machine...
+(test) Copying /Users/rumi/.docker/machine/cache/boot2docker.iso to /Users/rumi/.docker/machine/machines/test/boot2docker.iso...
+(test) Creating VirtualBox VM...
+(test) Creating SSH key...
+(test) Starting the VM...
+(test) Check network to re-create if needed...
+(test) Waiting for an IP...
+Waiting for machine to be running, this may take a few minutes...
+Detecting operating system of created instance...
+Waiting for SSH to be available...
+Detecting the provisioner...
+Provisioning with boot2docker...
+Copying certs to the local machine directory...
+Copying certs to the remote machine...
+Setting Docker configuration on the remote daemon...
+Checking connection to Docker...
+Docker is up and running!
+To see how to connect your Docker Client to the Docker Engine running on this virtual machine, run: docker-machine env test
+```
+
+
+```bash
+$ docker-machine ls
+NAME      ACTIVE   DRIVER       STATE     URL                         SWARM   DOCKER        ERRORS
+test      -        virtualbox   Running   tcp://192.168.99.101:2376           v17.12.1-ce  
+```
+
+#### Configuring Docker-machine
+
+```bash
+$ docker-machine ssh
+                        ##         .
+                  ## ## ##        ==
+               ## ## ## ## ##    ===
+           /"""""""""""""""""\___/ ===
+      ~~~ {~~ ~~~~ ~~~ ~~~~ ~~~ ~ /  ===- ~~~
+           \______ o           __/
+             \    \         __/
+              \____\_______/
+ _                 _   ____     _            _
+| |__   ___   ___ | |_|___ \ __| | ___   ___| | _____ _ __
+| '_ \ / _ \ / _ \| __| __) / _` |/ _ \ / __| |/ / _ \ '__|
+| |_) | (_) | (_) | |_ / __/ (_| | (_) | (__|   <  __/ |
+|_.__/ \___/ \___/ \__|_____\__,_|\___/ \___|_|\_\___|_|
+Boot2Docker version 18.01.0-ce, build HEAD : 0bb7bbd - Thu Jan 11 16:32:39 UTC 2018
+Docker version 18.01.0-ce, build 03596f5
+docker@default:~$ cd /var/lib/boot2docker/
+docker@default:/mnt/sda1/var/lib/boot2docker$ more bootsync.sh 
+
+
+
+sysctl -w vm.max_map_count=262144
+ps aglx | grep eth1 | grep -v grep | awk '{print $3}' | xargs kill
+ifconfig eth1 192.168.99.102 netmask 255.255.255.0 up                          
+
+```
+#### Starting cluster with compose
+
+```bash
+$ docker-compose up --no-start
+Creating elasticsearch2 ... done
+Creating elasticsearch ... 
+Creating elasticsearch2 ... 
+$ docker-compose ps
+     Name                   Command               State    Ports
+----------------------------------------------------------------
+elasticsearch    /docker-entrypoint.sh elas ...   Exit 0        
+elasticsearch2   /docker-entrypoint.sh elas ...   Exit 0        
+kibana           /docker-entrypoint-kibana. ...   Exit 0        
+
+
+$ docker-compose up -d
+Starting kibana ... 
+Starting elasticsearch ... 
+Starting elasticsearch ... done
+
+
+$ docker-compose ps
+     Name                   Command               State                Ports              
+------------------------------------------------------------------------------------------
+elasticsearch    /docker-entrypoint.sh elas ...   Up      0.0.0.0:9200->9200/tcp, 9300/tcp
+elasticsearch2   /docker-entrypoint.sh elas ...   Up      9200/tcp, 9300/tcp              
+kibana           /docker-entrypoint-kibana. ...   Up      0.0.0.0:5601->5601/tcp   
+```
 
 ### Manual cluster deployment
 

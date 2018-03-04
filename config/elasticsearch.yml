@@ -94,6 +94,7 @@ discovery.zen.ping.unicast.hosts: ${DISCOVERY_ZEN_PING_UNICAST_HOSTS:localhost}
 
 
 xpack.security.enabled: ${XPACK_SECURITY:false}
-xpack.monitoring.enabled: true
+xpack.monitoring.enabled: ${XPACK_MONITORING:true}
+xpack.security.transport.ssl.enabled: ${XPACK_TRANSPORT_SSL:true}
 
 
