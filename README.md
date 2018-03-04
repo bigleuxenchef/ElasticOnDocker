@@ -115,7 +115,11 @@ docker run --env NETWORK_HOST=_eth0_ --env ELASTICSEARCH_URL=http://<your-hostan
 This should work as if elastic would run natively on your machine.
 
 
-### Virtualization using Docker-Machine
+### Manual cluster deployment
+
+### Docker-Machine
+
+Docker-machine is a way to simulate a network on your machine therefore to test a cluster with multiple node. We will not explain here how to setup docker-machine but just remind the basics to start, stop and check the status of the machine.
 
 > Prerequisite 
 > Virtualbox installed
@@ -215,14 +219,6 @@ elasticsearch2   /docker-entrypoint.sh elas ...   Up      9200/tcp, 9300/tcp
 kibana           /docker-entrypoint-kibana. ...   Up      0.0.0.0:5601->5601/tcp   
 ```
 
-### Manual cluster deployment
-
-### Docker-Machine
-
-Docker-machine is a way to simulate a network on your machine therefore to test a cluster with multiple node. We will not explain here how to setup docker-machine but just remind the basics to start, stop and check the status of the machine.
-
- 
-
 
 
 
@@ -241,35 +237,19 @@ https://stackoverflow.com/questions/43082088/docker-machine-set-configuration-as
 
 routing between vboxnet0 vboxnet1
 
-MBP15:libexec rumi$ ip route add 192.168.99.101  dev en1
+# Remarks
+
+. docker compose file is sensitive to tabulation very much like python.
+
+
+. don't forget to set the password of elastic using bin/x-pack/setup-passwords auto
+
+. set routing rules
+```bash
+
+$ ip route add 192.168.99.101  dev en1
 Executing: /usr/bin/sudo /sbin/route add 192.168.99.101 -interface en1
 route: writing to routing socket: File exists
 add host 192.168.99.101: gateway en1: File exists
-
-
-#set ip of docker machine
-
-in the docker machine with root
-
-edit file /var/lib/boot2docker/
-
-add the following line to bootsync.sh
-
-ifconfig eth1 192.168.99.101 netmask 255.255.255.0 up                          
-
-
-restart the machine
-
-
-sysctl -w vm.max_map_count=262144
-ps aglx | grep eth1 | grep -v grep | awk '{print $3}' | xargs kill
-ifconfig eth1 192.168.99.101 netmask 255.255.255.0 up 
-
-
-# Remark
-
-docker compose file is sensitive to tabulation very much like python.
-
-
-bin/x-pack/setup-passwords auto
+```
 
