@@ -125,7 +125,7 @@ Virtualbox installed
 #### Create docker-machine
 
 ```bash
-MBP15:ElasticOnDocker rumi$ docker-machine create test
+$ docker-machine create test
 Running pre-create checks...
 (test) Default Boot2Docker ISO is out-of-date, downloading the latest release...
 (test) Latest release for github.com/boot2docker/boot2docker is v17.12.1-ce
