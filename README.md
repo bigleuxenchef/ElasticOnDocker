@@ -117,9 +117,8 @@ This should work as if elastic would run natively on your machine.
 
 ### Virtualization using Docker-Machine
 
-Prerequisite 
-
-Virtualbox installed
+> Prerequisite 
+> Virtualbox installed
 
 
 #### Create docker-machine
