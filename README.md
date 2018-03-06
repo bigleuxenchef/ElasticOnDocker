@@ -224,6 +224,88 @@ kibana           /docker-entrypoint-kibana. ...   Up      0.0.0.0:5601->5601/tcp
 
 ### Cluster with Docker Swarm mode
 
+3 machines installed with ubuntu
+
+. rumi-p310 : swarm server
+. rumi-ubuntu : swarn node
+. rumi-mini-ubuntu : swarn node
+
+
+
+
+#### initialize swarm master node
+
+```
+rumi@RUMI-P310:~/Downloads/ElasticOnDocker$ docker  swarm init --advertise-addr 192.168.0.16
+Swarm initialized: current node (aqvzk8anri1i12pdyd13alk9v) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-2duaiczr5wd9y6leu2b2d5q85o0rvmxs6dpth1w8enwat007fd-2iiw9cnwnqot8trqbzdofgfll 192.168.0.16:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+
+```
+#### Node joining docker swarm
+
+
+```
+# 2 nodes available to joim swarm cluster : rumi-mini-ubuntu.local and rumi-ubuntu.local
+ssh rumi@rumi-mini-ubuntu.local docker swarm join --token SWMTKN-1-2duaiczr5wd9y6leu2b2d5q85o0rvmxs6dpth1w8enwat007fd-2iiw9cnwnqot8trqbzdofgfll 192.168.0.16:2377
+ssh rumi@rumi-ubuntu.local docker swarm join --token SWMTKN-1-2duaiczr5wd9y6leu2b2d5q85o0rvmxs6dpth1w8enwat007fd-2iiw9cnwnqot8trqbzdofgfll 192.168.0.16:2377
+
+```
+
+```
+# check cluster nodes
+
+docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS
+aqvzk8anri1i12pdyd13alk9v *   RUMI-P310           Ready               Active              Leader
+qqi494x2qxhnzdb8cxcqbsj4t     rumi-mini-ubuntu    Ready               Active              
+koe7qcmwu0qb4zqlzslgzkdbv     rumi-ubuntu         Ready               Active
+```
+
+
+``` 
+# deploy the cluster as defined in docker-compose file
+$  docker stack deploy -c docker-compose.yml elk
+Ignoring unsupported options: ulimits
+
+Ignoring deprecated options:
+
+container_name: Setting the container name is not supported.
+
+Creating network elk_esnet
+Creating service elk_kibana
+Creating service elk_elasticsearch
+Creating service elk_elasticsearch2
+
+```
+```
+# check services loaded
+$ docker service ls
+ID                  NAME                 MODE                REPLICAS            IMAGE                 PORTS
+hyhy16d5dy7l        elk_elasticsearch    replicated          1/1                 elasticsearch:6.0.1   *:9200->9200/tcp
+9g1kze64fhsx        elk_elasticsearch2   replicated          1/1                 elasticsearch:6.0.1   
+rbamy55cq6os        elk_kibana           replicated          2/2                 kibana:6.0.1          *:5601->5601/tcp
+```
+
+
+```
+#stop the stack, however it will still keep all the data!
+docker stack rm elk
+
+```
+
+
+```
+# look at the logs
+
+```
+
+
 
 docker-compose
 
