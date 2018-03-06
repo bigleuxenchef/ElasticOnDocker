@@ -126,6 +126,8 @@ Docker-machine is a way to simulate a network on your machine therefore to test 
 
 
 #### Create docker-machine
+Interesting link to configure docker machine and avoid some challenges https://stackoverflow.com/questions/43082088/docker-machine-set-configuration-as-default
+
 
 ```bash
 $ docker-machine create test
@@ -302,22 +304,12 @@ docker stack rm elk
 
 ```
 # look at the logs
+docker service logs <service name>
 
 ```
 
 
 
-docker-compose
-
-connect to docker machine 
-
-sudo sysctl -w vm.max_map_count=262144
-can be permanently changed follow the link
-
-https://stackoverflow.com/questions/43082088/docker-machine-set-configuration-as-default
-
-
-routing between vboxnet0 vboxnet1
 
 # Remarks
 
@@ -327,7 +319,10 @@ routing between vboxnet0 vboxnet1
 . don't forget to set the password of elastic using bin/x-pack/setup-passwords auto
 
 . set routing rules
+
 ```bash
+
+# Routing between vboxnet0 vboxnet1
 
 $ ip route add 192.168.99.101  dev en1
 Executing: /usr/bin/sudo /sbin/route add 192.168.99.101 -interface en1
