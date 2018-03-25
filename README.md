@@ -16,6 +16,8 @@ Download all necessary file in such a way you have the following in download dir
 
 <img src="./images/directory.png" width=50% >
 
+> Note before starting make sure that all docker-entrypoint file have execution rights. When pulling from github, sometime the access rights are not set correctly
+
 
 
 
@@ -126,8 +128,6 @@ Docker-machine is a way to simulate a network on your machine therefore to test 
 
 
 #### Create docker-machine
-Interesting link to configure docker machine and avoid some challenges https://stackoverflow.com/questions/43082088/docker-machine-set-configuration-as-default
-
 
 ```bash
 $ docker-machine create test
@@ -194,6 +194,12 @@ ifconfig eth1 192.168.99.102 netmask 255.255.255.0 up
 ```
 #### Starting cluster with compose
 
+
+```bash
+# this command will prepare the environment for docker-compose to work within the docker-machine.
+eval $(docker-machine env default)
+```
+
 ```bash
 $ docker-compose up --no-start
 Creating elasticsearch2 ... done
@@ -221,93 +227,35 @@ elasticsearch2   /docker-entrypoint.sh elas ...   Up      9200/tcp, 9300/tcp
 kibana           /docker-entrypoint-kibana. ...   Up      0.0.0.0:5601->5601/tcp   
 ```
 
+#### Migrating cluster
 
+Migrating elastic in most cases can be accomplished as [Rolling upgrades](https://www.elastic.co/guide/en/elasticsearch/reference/current/rolling-upgrades.html), this is what we have done to upgrade without compromising our data from 6.0.1 to 6.2.2.
+
+Before we start we need to rebuild the images for elasticsearch:6.2.2 and kibana:6.2.2, files have been uploaded in this repository.
+
+Here are the steps followed :
+
+1. Start docker compose cluster as [above](#starting-cluster-with-compose)
+2. Edit `docker-compose.yml` file and replace the version of the service `elasticsearch` from `6.0.1` to 6.2.2`. 
+3. kill service elasticsearch with the command `docker-compose kill elasticsearch`
+4. Start docker-compose again, however as the services are still up for elasticsearch2 and kibana, compose will only recreate the new service with the new elastic version. As we keep anything else the same, the data is still being persisted and will be migrated as necessary by elastic.
+5. repeat step 4 with elasticsearch 2
+6. repeat step 4 with kibana
+
+That's it!
 
 
 ### Cluster with Docker Swarm mode
 
-3 machines installed with ubuntu
 
-. rumi-p310 : swarm server
-. rumi-ubuntu : swarn node
-. rumi-mini-ubuntu : swarn node
+docker-compose
 
+connect to docker machine 
 
+sudo sysctl -w vm.max_map_count=262144
+can be permanently changed follow the link
 
-
-#### initialize swarm master node
-
-```
-rumi@RUMI-P310:~/Downloads/ElasticOnDocker$ docker  swarm init --advertise-addr 192.168.0.16
-Swarm initialized: current node (aqvzk8anri1i12pdyd13alk9v) is now a manager.
-
-To add a worker to this swarm, run the following command:
-
-    docker swarm join --token SWMTKN-1-2duaiczr5wd9y6leu2b2d5q85o0rvmxs6dpth1w8enwat007fd-2iiw9cnwnqot8trqbzdofgfll 192.168.0.16:2377
-
-To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
-
-
-```
-#### Node joining docker swarm
-
-
-```
-# 2 nodes available to joim swarm cluster : rumi-mini-ubuntu.local and rumi-ubuntu.local
-ssh rumi@rumi-mini-ubuntu.local docker swarm join --token SWMTKN-1-2duaiczr5wd9y6leu2b2d5q85o0rvmxs6dpth1w8enwat007fd-2iiw9cnwnqot8trqbzdofgfll 192.168.0.16:2377
-ssh rumi@rumi-ubuntu.local docker swarm join --token SWMTKN-1-2duaiczr5wd9y6leu2b2d5q85o0rvmxs6dpth1w8enwat007fd-2iiw9cnwnqot8trqbzdofgfll 192.168.0.16:2377
-
-```
-
-```
-# check cluster nodes
-
-docker node ls
-ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS
-aqvzk8anri1i12pdyd13alk9v *   RUMI-P310           Ready               Active              Leader
-qqi494x2qxhnzdb8cxcqbsj4t     rumi-mini-ubuntu    Ready               Active              
-koe7qcmwu0qb4zqlzslgzkdbv     rumi-ubuntu         Ready               Active
-```
-
-
-``` 
-# deploy the cluster as defined in docker-compose file
-$  docker stack deploy -c docker-compose.yml elk
-Ignoring unsupported options: ulimits
-
-Ignoring deprecated options:
-
-container_name: Setting the container name is not supported.
-
-Creating network elk_esnet
-Creating service elk_kibana
-Creating service elk_elasticsearch
-Creating service elk_elasticsearch2
-
-```
-```
-# check services loaded
-$ docker service ls
-ID                  NAME                 MODE                REPLICAS            IMAGE                 PORTS
-hyhy16d5dy7l        elk_elasticsearch    replicated          1/1                 elasticsearch:6.0.1   *:9200->9200/tcp
-9g1kze64fhsx        elk_elasticsearch2   replicated          1/1                 elasticsearch:6.0.1   
-rbamy55cq6os        elk_kibana           replicated          2/2                 kibana:6.0.1          *:5601->5601/tcp
-```
-
-
-```
-#stop the stack, however it will still keep all the data!
-docker stack rm elk
-
-```
-
-
-```
-# look at the logs
-docker service logs <service name>
-
-```
-
+https://stackoverflow.com/questions/43082088/docker-machine-set-configuration-as-default
 
 
 
@@ -319,14 +267,12 @@ docker service logs <service name>
 . don't forget to set the password of elastic using bin/x-pack/setup-passwords auto
 
 . set routing rules
-
 ```bash
-
-# Routing between vboxnet0 vboxnet1
 
 $ ip route add 192.168.99.101  dev en1
 Executing: /usr/bin/sudo /sbin/route add 192.168.99.101 -interface en1
 route: writing to routing socket: File exists
 add host 192.168.99.101: gateway en1: File exists
 ```
+. routing between vboxnet0 vboxnet1
 

@@ -35,12 +35,12 @@ RUN set -x \
 #	&& apt-get update && apt-get install -y --no-install-recommends apt-transport-https && rm -rf /var/lib/apt/lists/* \
 #	&& echo 'deb https://artifacts.elastic.co/packages/6.x/apt stable main' > /etc/apt/sources.list.d/elasticsearch.list
 
-ENV KIBANA_VERSION 6.0.1
-COPY downloads/kibana-6.0.1-amd64.deb /
-COPY downloads/x-pack-6.0.1.zip /
+ENV KIBANA_VERSION 6.2.2
+COPY downloads/kibana-6.2.2-amd64.deb /
+COPY downloads/x-pack-6.2.2.zip /
 
 RUN set -x \
-	&& dpkg -i kibana-6.0.1-amd64.deb
+	&& dpkg -i kibana-6.2.2-amd64.deb
 
 
 RUN set -x \
@@ -66,7 +66,7 @@ RUN set -x \
 
 
 RUN set -ex \
-      && /usr/share/kibana/bin/kibana-plugin install file:///x-pack-6.0.1.zip
+      && /usr/share/kibana/bin/kibana-plugin install file:///x-pack-6.2.2.zip
 
 
 

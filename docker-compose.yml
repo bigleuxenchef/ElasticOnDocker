@@ -2,7 +2,7 @@
 version: '3.4'
 services:
   elasticsearch:
-    image: elasticsearch:6.0.1
+    image: elasticsearch:6.2.2
     container_name: elasticsearch
     hostname: elasticsearch
     environment:
@@ -11,20 +11,21 @@ services:
       - "ES_JAVA_OPTS=-Xms2G -Xmx2G"
       - "NETWORK_HOST=elasticsearch"
       - "NODE_NAME=node1"
-      - "XPACK_SECURITY=true"
+      - "XPACK_SECURITY=false"
     ulimits:
       memlock:
         soft: -1
         hard: -1
     volumes:
       - esdata1:/usr/share/elasticsearch/data
+      - /usr/local/share/snapshot:/snapshot
     ports:
       - 9200:9200
     networks:
       - esnet
 
   elasticsearch2:
-    image: elasticsearch:6.0.1
+    image: elasticsearch:6.2.2
     container_name: elasticsearch2
     hostname: elasticsearch2
     environment:
@@ -34,18 +35,20 @@ services:
       - "DISCOVERY_ZEN_PING_UNICAST_HOSTS=elasticsearch"
       - "NETWORK_HOST=elasticsearch2"
       - "NODE_NAME=node2"
-      - "XPACK_SECURITY=true"
+      - "XPACK_SECURITY=false"
     ulimits:
       memlock:
         soft: -1
         hard: -1
     volumes:
       - esdata2:/usr/share/elasticsearch/data
+      - /usr/local/share/snapshot:/snapshot
     networks:
       - esnet 
 
+
   kibana:
-    image: kibana:6.0.1
+    image: kibana:6.2.2
     container_name: kibana
     hostname: kibana
     environment:

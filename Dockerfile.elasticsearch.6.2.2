@@ -30,10 +30,10 @@ RUN set -x \
 #	&& apt-get update && apt-get install -y --no-install-recommends apt-transport-https && rm -rf /var/lib/apt/lists/* \
 #	&& echo 'deb https://artifacts.elastic.co/packages/6.x/apt stable main' > /etc/apt/sources.list.d/elasticsearch.list
 
-ENV ELASTICSEARCH_VERSION 6.0.1
-ENV ELASTICSEARCH_DEB_VERSION 6.0.1
-COPY downloads/elasticsearch-6.0.1.deb /
-COPY downloads/x-pack-6.0.1.zip /
+ENV ELASTICSEARCH_VERSION 6.2.2
+ENV ELASTICSEARCH_DEB_VERSION 6.2.2
+COPY downloads/elasticsearch-6.2.2.deb /
+COPY downloads/x-pack-6.2.2.zip /
 
 RUN set -x \
 	\
@@ -41,9 +41,9 @@ RUN set -x \
 # Failed to write '262144' to '/proc/sys/vm/max_map_count': Read-only file system
 #	&& dpkg-divert --rename /usr/lib/sysctl.d/elasticsearch.conf \
 	\
-	&& apt-get update \
-	&& apt-get install -f /elasticsearch-6.0.1.deb  \
-	&& apt-get -y install vim \
+#	&& apt-get update \
+	&& apt-get install -f /elasticsearch-6.2.2.deb  \
+#	&& apt-get -y install vim \
 	&& rm -rf /var/lib/apt/lists/*
 
 
@@ -63,7 +63,7 @@ RUN set -ex \
 	done
 
 RUN set -ex \
-       && /usr/share/elasticsearch/bin/elasticsearch-plugin install file:///x-pack-6.0.1.zip
+       && /usr/share/elasticsearch/bin/elasticsearch-plugin install file:///x-pack-6.2.2.zip
 
 COPY config /etc/elasticsearch
 
